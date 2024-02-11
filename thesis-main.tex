@@ -7,20 +7,20 @@
 \usepackage{acronym}
 
 \school{\unibo}
-\programme{Corso di Laurea [Magistrale?] in Ingegneria e Scienze Informatiche}
-\title{Fancy Title}
-\author{Candidate Name}
+\programme{Corso di Laurea in Ingegneria e Scienze Informatiche}
+\title{Sviluppo di un'Interfaccia Grafica per Software Simulativi Complessi mediante GraphQL e KotlinJS}
+\author{Tiziano Vuksan}
 \date{\today}
-\subject{Supervisor's course name}
-\supervisor{Prof. Supervisor Here}
-\cosupervisor{Dott. CoSupervisor 1}
-\morecosupervisor{Dott. CoSupervisor 2}
-\session{I}
-\academicyear{2022-2023}
+\subject{Programmazione ad Oggetti}
+\supervisor{Dott. Danilo Pianini}
+\cosupervisor{Dott. Angelo Filaseta}
+\session{IV}
+\academicyear{2023-2024}
 
 % Definition of acronyms
-\acrodef{IoT}{Internet of Thing}
-\acrodef{vm}[VM]{Virtual Machine}
+%\acrodef{IoT}{Internet of Thing}
+\acrodef{API}{Application Program Interface}
+%\acrodef{vm}[VM]{Virtual Machine}
 
 
 \mainlinespacing{1.241} % line spacing in mainmatter, comment to default (1)
@@ -50,50 +50,24 @@ Optional. Max 1 page.
 \mainmatter
 
 %----------------------------------------------------------------------------------------
-\chapter{Introduction}
-\label{chap:introduction}
+\include{1_Introduction.tex}
 %----------------------------------------------------------------------------------------
 
-Write your intro here.
-\sidenote{Add sidenotes in this way. They are named after the author of the thesis}
+%----------------------------------------------------------------------------------------
+\include{2_Analysis.tex}
+%----------------------------------------------------------------------------------------
 
-You can use acronyms that your defined previously,
-such as \ac{IoT}.
-%
-If you use acronyms twice,
-they will be written in full only once
-(indeed, you can mention the \ac{IoT} now without it being fully explained).
-%
-In some cases, you may need a plural form of the acronym.
-%
-For instance,
-that you are discussing \acp{vm},
-you may need both \ac{vm} and \acp{vm}.
+%----------------------------------------------------------------------------------------
+\include{3_Design.tex}
+%----------------------------------------------------------------------------------------
 
-\paragraph{Structure of the Thesis}
+%----------------------------------------------------------------------------------------
+\include{4_Implementation.tex}
+%----------------------------------------------------------------------------------------
 
-\note{At the end, describe the structure of the paper}
-
-\chapter{State of the art}
-
-I suggest referencing stuff as follows: \cref{fig:random-image} or \Cref{fig:random-image}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=.8\linewidth]{figures/random-image.pdf}
-    \caption{Some random image}
-    \label{fig:random-image}
-\end{figure}
-
-\section{Some cool topic}
-
-\chapter{Contribution}
-
-You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
-
-\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
-
-\section{Fancy formulas here}
+%----------------------------------------------------------------------------------------
+\include{5_Conclusions.tex}
+%----------------------------------------------------------------------------------------
 
 %----------------------------------------------------------------------------------------
 % BIBLIOGRAPHY
