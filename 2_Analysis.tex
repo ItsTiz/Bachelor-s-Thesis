@@ -27,10 +27,8 @@ Lo scopo principale del progetto è la realizzazione di una interfaccia web (qui
 	\item L'architettura delle componenti grafiche deve essere estendibile e facilmente modificabile.
 \end{itemize}
 
-Questo progetto verte sul bisogno di creare una piattaforma Client tale da impiegare le \ac{API} esposte dall'infrastruttura GraphQL fornita. Pertanto non esisterà una comunicazione diretta tra il Client e la simulazione di Alchemist. Tutte le informazioni necessarie a rappresentare l'\textit{Environment} della simulazione saranno ottenibili da tale modulo.
-
 \subsection{Architettura API GraphQL}
-Prima di analizzare il funzionamento principale dell'architettura fornita è utile capire brevemente le motivazioni dietro l'utilizzo di GraphQL e il contesto per il quale nasce. GraphQL\footnote{\url{https://graphql.org/foundation/}} è un linguaggio di interrogazione per le \ac{API} che offre una sintassi flessibile e potente per recuperare dati da un server, creato da Facebook nel 2012 come alternativa all'esistente architettura \ac{REST}. Evidenziamo quindi i punti di forza più pertinenti:
+Prima di analizzare il funzionamento principale dell'architettura server esistente è utile capire brevemente le motivazioni dietro l'utilizzo di GraphQL e il contesto per il quale nasce. GraphQL\footnote{\url{https://graphql.org/foundation/}} è un linguaggio di interrogazione per le \ac{API} che offre una sintassi flessibile e potente per recuperare dati da un server, creato da Facebook nel 2012 come alternativa all'esistente architettura \ac{REST}. Evidenziamo quindi i punti di forza più pertinenti:
 \begin{itemize}
 	\item \textbf{Flessibilità nelle query}: i client possono richiedere esattamente i dati di cui hanno bisogno, evitando di occupare, nelle richieste di dati, più banda di rete del necessario. Con questo linguaggio vengono risolti quindi i problemi di \textit{over-fetching} e \textit{under-fetching}.
 	\item \textbf{Unica endpoint}:  mentre nelle architetture di tipo \ac{REST} i dati sono esposti tramite endpoint dedicati che corrispondono ciascuno a una risorsa specifica (identificati tramite un \ac{URL} univoco), in GraphQL l'interrogazione dei dati avviene tramite un unico \textit{endpoint}.
@@ -52,11 +50,8 @@ Al centro delle operazioni GraphQL c'è uno schema che definisce tutti i tipi di
 \subsection{Rendering del contesto grafico}
 È importante sottolineare come le prestazioni siano un fattore decisivo nella scelta delle tecniche per rappresentare l'ambiente della simulazione.
 In questo contesto, prestazioni ottimali assicurano un'esperienza utente fluida e soddisfacente. È per questo motivo che la scelta di disegnare i nodi della simulazione di \textit{Alchemist} direttamente all'interno di un elemento di tipo \textit{canvas } HTML prevale rispetto alla rappresentazione tramite elementi \ac{DOM}. Nell'ipotesi in cui si decidesse di rappresentare ciascun nodo con un elemento del DOM (e.g. \texttt{div}), il \textit{rendering} risulterebbe oneroso, perché ogni elemento \ac{DOM} aggiunto alla pagina web richiederebbe risorse di sistema per essere gestito e disegnato dal browser. Con un considerevole numero di nodi, oltretutto aggiornati frequentemente, questo metodo causerebbe solo un deterioramento delle prestazioni. Inoltre, utilizzando un \textit{canvas}, si ha maggiore flessibilità nel disegno dei nodi e nel loro comportamento. Si può disegnare senza nessun vincolo una qualsiasi forma o figura, applicare trasformazioni ed effetti visivi senza doversi occupare delle restrizioni del \ac{DOM}. D'altro canto, agli elementi del \ac{DOM} possono essere collegati dei \textit{listener}, funzioni associate a un determinato tipo di evento, come un click o il movimento del mouse. Sebbene questo vantaggio, il \textit{canvas} torna più utile in questa situazione perché offre la possibilità di implementare interazioni più complesse, come per esempio lo zoom del contesto (modifica della scala) o la traslazione dell'intera area di disegno.
-
 Il processo di rendering dei nodi sul \textit{canvas} è illustrato in figura \cref{fig:rendering-graphics}. Inizialmente, il sistema apre una connessione con il Client GraphQL e si iscrive alla richiesta di invio dei nodi. Il server accetta la richiesta d'iscrizione e invia dati fino a quando la \textit{subscription} non viene cancellata o completamente consumata. A ogni iterazione il Web Client ridisegna i nodi nel \textit{canvas}.
-
 A ogni fase della simulazione i nodi possono cambiare di posizione o meno, in base al tipo di simulazione che è in esecuzione. 
-
 \begin{figure}
 	\centering
 	\includegraphics[width=.9\linewidth]{imgs/Rendering_Diagramma_Sequenza.pdf}
@@ -65,13 +60,19 @@ A ogni fase della simulazione i nodi possono cambiare di posizione o meno, in ba
 \end{figure}
 
 \subsection{Progetto multiplatform}
-Kotlin Multipltaform è una tecnologia che permette lo sviluppo di codice Kotlin condivisibile tra diverse piattaforme, come per esempio Android, iOS, web e desktop. Questo significa che è possibile utilizzare lo stesso codice Kotlin per creare applicazioni native per diverse piattaforme, riducendo la necessità di scrivere e mantenere codice separato per ciascuna piattaforma. 
-Caratteristica dei progetti multipiattaforma è che sono composti dai cosiddetti \textit{source sets}: insiemi di codice sorgente specifico della piattaforma a cui si riferiscono. Generalmente è sempre presente il modulo comune, detto ``common code''. Questo modulo contiene il codice condiviso che può essere utilizzato su tutte le piattaforme. Ad accompagnarlo quindi sono altri \textit{source sets} aggiuntivi, compilati per target diversi come JVM, JavaScript o nativo. In questo caso il progetto potrebbe includere i seguenti \textit{source set}:
+Kotlin Multiplatform è una tecnologia che permette lo sviluppo di codice Kotlin condivisibile tra diverse piattaforme, come per esempio Android, iOS, web e desktop. Questo significa che è possibile utilizzare lo stesso codice Kotlin per creare applicazioni native per diverse piattaforme, riducendo la necessità di scrivere e mantenere codice separato per ciascuna piattaforma. 
+Caratteristica dei progetti multipiattaforma è che sono composti dai cosiddetti \textit{source sets}: insiemi di codice sorgente specifico della piattaforma a cui si riferiscono. Generalmente è sempre presente il modulo comune, detto ``common code''. Questo modulo contiene il codice condiviso che può essere utilizzato su tutte le piattaforme. Ad accompagnarlo quindi sono altri \textit{source sets} aggiuntivi, compilati per target diversi come \ac{JVM}, JavaScript o nativo. Nel caso dello sviluppo di una applicazione in-browser il progetto potrebbe includere i seguenti \textit{source set}:
 \begin{itemize}
 	\item \textbf{Common Source Set}: Codice condiviso che può essere utilizzato su tutte le piattaforme target.
-	\item \textbf{JVM Source Set}: Codice destinato al target JVM.
-	\item \textbf{JavaScript Source Set}: Codice destinato al target JavaScript.
+	\item \textbf{JVM Source Set}: Codice destinato al target \ac{JVM}. Da qui può essere gestita una componente server dal quale sarà accessibile l'interfaccia grafica.
+	\item \textbf{JavaScript Source Set}: Codice destinato al target JavaScript. Qui viene definita la struttura e il comportamento dell'interfaccia grafica vera e propria.
 \end{itemize}
 
-
 \section{Analisi e Modello del Dominio}
+Uno dei requisti di questo applicativo verte sul bisogno di creare una piattaforma web tale da impiegare le \ac{API} esposte dall'infrastruttura GraphQL fornita. Pertanto non esiste una comunicazione diretta tra il web client e la simulazione di \textit{Alchemist}. La gestione dell'accesso e del recupero dei dati dal modello della simulazione è affidata alla componente server, che, al contempo, fornisce anche un punto di accesso ai client che richiedono tali dati.
+Il client-web quindi comprende un modulo (nell'immagine ClientGraphQL) che si pone da interfaccia tra l'applicazione web vera e propria e l'\textit{endpoint } sulla quale la componente server utilizzerà per ricevere richieste e mandare risposte (\textit{endpoint} \texttt{/graphql}). 
+Il compito del client-web quindi sarà quello di utilizzare le operazioni possibili (\textit{query}, \textit{mutation} e \textit{subscription}) e utilizzare i risultati per rappresentarli graficamente.
+
+\textit{Alchemist} presenta già altri moduli che rappresentano l'ambiente di simulazione, implementati con tecnologie differenti a quelle che verranno proposte successivamente in questo elaborato. Il modulo specifico che viene avviato per rappresentare la simulazione dipende dalla configurazione con cui viene avviato l'intero software. Di conseguenza, è opportuno che l'interfaccia web e la componente server vengano avviate esclusivamente attraverso una specifica configurazione della simulazione.
+
+
