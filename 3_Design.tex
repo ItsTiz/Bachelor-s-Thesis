@@ -3,7 +3,7 @@
 %You may also put some code snippet (which is NOT float by default), eg: \cref{lst:random-code}.
 
 %\lstinputlisting[float,language=Java,label={lst:random-code}]{listings/HelloWorld.java}
-\section{Layout dell'interfaccia}
+\section{Layout dell'interfaccia} \ref{section:interface-layout}
 Il layout dell'interfaccia grafica è stato pensato per rappresentare nel modo più semplice ed intuitivo l'ambiente della simulazione.  La figura \ref{fig:interface-layout} rappresenta un mockup utilizzato durante la fase di progettazione dell'interfaccia. Si possono individuare le seguenti sezioni:
 \begin{itemize}
 	\item \textbf{Barra di navigazione}: nella parte alta dell'interfaccia è presente una barra di navigazione contenente il titolo e il pulsante per avviare o mettere in pausa la simulazione, ancorato all'estrema destra. Molte interfacce web moderne presentano questo tipo di elemento come \textit{header} della pagina web principale, inteso come punto centrale dal quale è possibile accedere a tutte le sezioni e funzionalità. Questo fornisce all'interfaccia un punto di espandibilità dell'applicativo, come l'aggiunta di una barra di ricerca o di un menù detto ad ``hamburger''. Sarebbe stato possibile, per esempio, inserire una barra di ricerca per i nodi, filtrandoli per categorie di proprietà. Questo tipo di funzionalità è indirizzato a lavori futuri. 
@@ -19,12 +19,12 @@ Il layout dell'interfaccia grafica è stato pensato per rappresentare nel modo p
 	\label{fig:interface-layout}
 \end{figure}
 
-\section{Architettura generale client web}
+\section{Connessione al server GraphQL}
 In questa sezione viene esplorato come l'interfaccia web interagisce con le \ac{API} GraphQL per effettuare operazioni sul server e per poi usare i risultati di suddette operazioni per mostrarli graficamente. Nella figura \ref{fig:general-client-architecture-graphics} vengono mostrate le principali componenti protagoniste di questo meccanismo. Le descriviamo in questo modo:
 
 \begin{itemize}
 	\item \textbf{Client Application}: questo \textit{package} contiene tutte le componenti grafiche che vengono rappresentate all'interno della pagina principale. Ogni componente, una volta che l'applicativo viene avviato, è tradotto al browser in formato HTML.
-	\item \textbf{ClientConnection}: punto di accesso attraverso il quale è possibile effettuare tutte le operazioni definite secondo lo schema GraphQL. 
+	\item \textbf{ClientConnection}: punto di accesso attraverso il quale è possibile effettuare tutte le operazioni definite secondo lo schema GraphQL. All'interno di questo oggetto è dichiarata l'unica istanza per l'intero progetto che funge da punto di accesso per le operazioni sul server secondo lo schema definito. 
 	\item \textbf{SimulationControlApi}: questo oggetto contiene tutte le funzioni necessarie a controllare lo stato della simulazione e dipende strettamente dalla componente \textbf{ClientConnection}. Si parla quindi di funzioni utili all'avvio, alla sospensione e terminazione della simulazione. Notare come queste siano tutte operazioni di tipo \textit{mutation}.
 	\item \textbf{EnvironmentApi}: è l'oggetto utile a recuperare le informazioni riguardanti un nodo, lo stato \textit{attuale} dell'\textit{Environment}, ma soprattutto utile a recuperare la posizione dei nodi in tempo reale, quindi attraverso l'utilizzo di una \textit{subscription}. 
 	\item \textbf{GeneratedModel}: questo pacchetto contiene tutte le risorse generate a partire dallo schema GraphQL esposto dal server. È utilizzato dagli oggetti \textbf{EnvironmentApi} e \textbf{SimulationControlApi} nell'utilizzo dei tipi di dato corretto durante l'utilizzo delle operazioni sul server.
@@ -39,11 +39,27 @@ In questa sezione viene esplorato come l'interfaccia web interagisce con le \ac{
 
 Gli oggetti \textbf{SimulationControlApi} e \textbf{EnvironmentApi} sono stati implementati attraverso il design pattern \textit{Singleton}~\cite{Gamma1994}. Sebbene quest'ultimo, se abusato o implementato in modo non adeguato sia considerato di fatto un ``anti-pattern'' \footnote{\url{https://code.google.com/archive/p/google-singleton-detector/wikis/WhySingletonsAreControversial.wiki}}, in questa situazione risulta essere molto comodo, specialmente considerando la necessità di un unico punto di accesso comune al client che effettua le query sul server. Risulterebbe infatti inutile, per ogni componente grafico che ne necessita, istanziare un'altro client GraphQL dal quale effettuare query. Lo stesso vale anche nell'ipotesi in cui vengano utilizzate delle proprietà che fungono da parametri di configurazione dell'applicativo. Un \textit{Singleton} può fornire un punto centralizzato per queste impostazioni.
 
-\section{Struttura delle componenti grafiche}
+\section{Architettura generale client web}
+Il diagramma UML in figura mostra la soluzione adottata alla necessità di ospitare la pagina web finale all'interno di un browser web. Dallo schema è possibile individuare le seguenti sezioni:
 
+\begin{itemize}
+	\item \textbf{OutputMonitor}: interfaccia di \textit{Alchemist} che fornisce un modo flessibile per osservare la progressione delle simulazioni tramite l'esposizione di \textit{hook standard}.  Quest'ultimi si riferiscono a punti predefiniti all'interno del ciclo di vita della simulazione (avvio della simulazione, fine di ogni passo della simulazione, fine della simulazione) ai quali è possibile collegare meccanismi personalizzati. Questa interfaccia aderisce al design pattern \textit{Observer}~\cite{Gamma1994}.
+	\item \textbf{GraphQLServer}: implementazione dell'interfaccia  \texttt{OutputMonitor}. Questa classe avvia il server GraphQL all'avvio della simulazione e si assicura che al termine della simulazione il server venga chiuso.
+    \item \textbf{WebUIMonitor}: estensione della classe \texttt{GraphQLServer}, che avvia il server sul quale viene presentata la pagina web contenente l'interfaccia grafica esplorata in sezione \ref{section:interface-layout}. Come per la classe da cui eredita, al momento della terminazione della simulazione, il server viene chiuso. L'estensione alla classe \texttt{GraphQLServer} permette che la simulazione venga configurata con \texttt{WebUIMonitor} come \texttt{OutputMonitor}, che, in thread separati, avvia sia il server GraphQL che il server che ospita la pagina web che rappresenta l'interfaccia grafica.
+    In questo contesto, è necessario configurare una nuova \textit{route} nel server per caricare la pagina principale \texttt{index.html}. Per semplificare il processo, questa \textit{route} verrà mappata per rispondere alle richieste GET alla radice (``\texttt{/}''), servendo la risorsa \texttt{index.html}. Ciò consente ai client di accedere direttamente alla pagina specificando l'indirizzo e la porta del server.
+	\item \textbf{Generated Artifacts}: questo pacchetto include tutti i file necessari alla composizione di un unico file di output, con estensione \texttt{.js} (processo noto anche come \textit{bundling}). Il file che ne risulterà verrà servito al server in modo statico. Il server può essere configurato per andare a recuperare tutti gli artefatti necessari al \textit{bundling} a partire da un percorso remoto specificato. Ciò significa che nel caso fossero stati dichiarati dei file CSS o JavaScript separati questi sarebbero stati comunque coinvolti nella generazione del file di output e sarebbero stati accessibili tramite \ac{URL} che iniziano dal percorso remoto (in questo caso ``\texttt{/}'').	
+	Ad esempio, se il pacchetto base contiene un file chiamato ``\texttt{styles.css}" e il percorso remoto è ``\texttt{/static}", il file ``\texttt{styles.css}" può essere accessibile all'URL ``\texttt{static/styles.css}" nell'applicazione. 
+	
+\end{itemize}
 
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.7]{imgs/Web_Client_Structure.pdf}
+	\caption{Architettura generale del client web}
+	\label{fig:client-web-structure-graphics}
+\end{figure}
 
-\section{Architettura }
+\section{Struttura della pagina web}
 
 
 
