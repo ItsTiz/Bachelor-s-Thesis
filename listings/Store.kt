@@ -1,0 +1,1 @@
+val nodeStore = createTypedReduxStore(::nodeReducer, NodeState())
