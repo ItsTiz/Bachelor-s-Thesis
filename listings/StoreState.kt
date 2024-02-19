@@ -1,0 +1,1 @@
+data class NodeState(val node: NodeQuery.Data?)

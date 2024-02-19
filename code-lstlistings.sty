@@ -17,7 +17,7 @@
 \lstset{
 	backgroundcolor=\color{backcolour},   
 	showstringspaces=false,
-	basicstyle=\ttfamily\textsize,
+	basicstyle=\ttfamily\normalsize,
 	columns=fullflexible,
 	commentstyle={\color{olive}},
 	identifierstyle=\color{black},
@@ -35,10 +35,26 @@
 	%frameround=fttt,
 }
 
+\lstdefinelanguage{KVision}{
+	comment=[l]{//},
+	emph={},
+	keywords={flexPanel, div, bind},
+	keywords=[2]{NodeStore, perc},
+	stringstyle={\color{codegreen}},
+	morecomment=[s]{/*}{*/},
+	morestring=[b]",
+	morestring=[s]{"""*}{*"""},
+	ndkeywords={NodeStore},
+	sensitive=true
+}
+
+
+
 \lstdefinelanguage{Kotlin}{
 	comment=[l]{//},
 	emph={delegate, filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
-	keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, override, package, private, public, return, set, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+	keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, override, package, private, public, return, set, sealed, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+	stringstyle={\color{codegreen}},
 	morecomment=[s]{/*}{*/},
 	morestring=[b]",
 	morestring=[s]{"""*}{*"""},

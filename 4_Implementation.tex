@@ -1,8 +1,15 @@
+%!TEX root = ./thesis-main.tex
 \chapter{Implementazione e Verifica}
 
 \section{Componenti grafici}
+Lo sviluppo web moderno trae benefici significativi da framework che semplificano la creazione di applicazioni web. Tutte le componenti grafiche all'interno di questo progetto sono state sviluppate attraverso l'utilizzo del framework open-source \textit{KVision}\footnote{\url{https://kvision.gitbook.io/kvision-guide/}}, che permette agli sviluppatori di costruire interfacce web moderne senza utilizzare HTML, CSS o JavaScript. Le interfacce vengono assemblate attraverso la composizione di oggetti pronti all'uso, seguendo un paradigma paragonabile a quello dichiarativo. Il risultato sono gerarchie di componenti che possono essere usate come blocchi costituenti dell'intera interfaccia. In aggiunta, \textit{KVision} presenta supporto integrato per gli store Redux (esplorati in \cref{section:state-management}), per le icone Font Awesom, per Bootstrap e molto altro. Questa libreria sfrutta puramente le capacità del linguaggio Kotlin (compilato per target JS), specialmente con l'utilizzo di \textit{type safe builders}, implementati attraverso \textit{extension functions}. Quello offerto da \textit{KVision} è di fatto un \ac{DSL}, di cui si è fatto ampiamente uso.
+Nel \cref{lst:graphic-comp-declaration} è illustrata la definizione intera dalla barra di navigazione della pagina web.
 
-\section{Gestione dello stato}
+\lstinputlisting[float=h, language=Kotlin, label={lst:graphic-comp-declaration}, caption={Utilizzo del \ac{DSL} KVision per la struttura della navbar}]{listings/AppBar.kt}
+
+\section{Integrazioni di operazioni GraphQL}
+
+\section{Gestione dello stato}\label{section:state-management}
 Il framework \textit{KVision}, oltre a fornire strumenti e metodi di programmazione molto robusti e versatili, dona la possibilità di usare tutta la capacità della libreria di \textit{Redux}\footnote{\url{https://redux.js.org/tutorials/essentials/part-1-overview-concepts}}, una libreria open-source per la gestione dello stato delle applicazioni JavaScript. Il fulcro di questa libreria consiste nel cosiddetto \textit{store}, un archivio centralizzato per uno stato che deve essere condiviso in tutta l'applicazione, attraverso l'utilizzo di regole che garantiscono che lo stato possa essere aggiornato solamente in modo prevedibile. Analizziamo ora il funzionamento della gestione dello stato introducendo tutti i concetti chiave: 
 \begin{itemize}	
 	\item \textbf{State}: ``The source of truth that drives our app'', in altre parole, dati o insieme di dati che influenzano il comportamento o l'aspetto dell'applicazione. 	
@@ -10,8 +17,8 @@ Il framework \textit{KVision}, oltre a fornire strumenti e metodi di programmazi
 	\item \textbf{Actions}: usati per descrivere possibili cambiamenti dello stato. Sono oggetti, dotati di un campo che ne indica il tipo, incaricati a indicare l'azione che deve essere eseguita sullo store per cambiarne lo stato. Si può pensare a questo tipo di oggetti come ad eventi che riportano un certo avvenimento nell'applicazione. Di solito vengono chiamati dopo un input, ovvero quando si verifica un evento specifico nell'applicazione, come un click del mouse o quando un pulsante viene premuto.
 	\item \textbf{Store (archivio)}: l'oggetto centrale che contiene lo stato dell'applicazione in un determinato momento.
 	\item \textbf{Reducers}: funzioni che descrivono esattamente come deve essere cambiato lo stato, in risposta alle azioni chiamate sullo store. Come parametri di ingresso accettano lo stato corrente e l'azione che si vuole eseguire, ritornando un nuovo stato. I reducer possono essere paragonati a dei \textit{listener} che gestiscono gli eventi (\textit{actions}) in base al loro tipo.
-	\item \textbf{Dispatch}: metodo di cui lo store dispone. L'unico modo per aggiornare lo stato è invocando questa funzione, passando come parametro un'azione.  A questo punto lo store può eseguire il suo \textit{reducer} e salvare il nuovo stato al suo interno. Nel momento in cui un evento viene innescato (proveniente per esempio della UI), si vuole di conseguenza aggiornare il valore dello store.
-	\item \textbf{Subscribe}: sono funzioni che permettono ai componenti grafici di ``iscriversi'' ai cambiamenti di stato dello store. Ogni volte che lo stato cambia, i componenti iscritti vengono avvisati, dando la possibilità di aggiornare la UI in base al nuovo cambio di stato.
+	\item \textbf{Dispatch}: metodo di cui lo store dispone. L'unico modo per aggiornare lo stato è invocando questa funzione, passando come parametro un'azione.  A questo punto lo store può eseguire il suo \textit{reducer} e salvare il nuovo stato al suo interno. Nel momento in cui un evento viene innescato (proveniente per esempio della \ac{UI}), si vuole di conseguenza aggiornare il valore dello store.
+	\item \textbf{Subscribe}: sono funzioni che permettono ai componenti grafici di ``iscriversi'' ai cambiamenti di stato dello store. Ogni volte che lo stato cambia, i componenti iscritti vengono avvisati, dando la possibilità di aggiornare la \ac{UI} in base al nuovo cambio di stato.
 \end{itemize}
 Insieme agli elementi appena descritti, la figura \cref{fig:redux-scheme} riesce a dare una visione più completa.
 \begin{figure}[htb]
@@ -20,24 +27,63 @@ Insieme agli elementi appena descritti, la figura \cref{fig:redux-scheme} riesce
 	\caption{Architettura generale del client web}
 	\label{fig:redux-scheme}
 \end{figure}
-Dallo schema è possibile notare come sia presente una unica direzione che collega le varie entità. Questo è dovuto al fatto che la sequenza dei passi da compiere per l'aggiornamento dello stato segue il paradigma ``one-way data flow". In particolare, per Redux si seguono quindi questi passaggi:
+Dallo schema è possibile notare come sia presente una unica direzione che collega le varie entità. Questo è dovuto al fatto che la sequenza dei passi da compiere per l'aggiornamento dello stato segue il paradigma \textbf{``one-way data flow"}. In particolare, per Redux si seguono quindi questi passaggi:
 %Viene creato uno store Redux utilizzando una funzione reducer radice.
 %Lo store chiama il reducer radice una volta e salva il valore restituito come suo stato iniziale.
 %Quando l'interfaccia utente viene renderizzata per la prima volta, i componenti dell'interfaccia utente accedono allo stato attuale dello store Redux e utilizzano tali dati per decidere cosa renderizzare. Si iscrivono anche a eventuali aggiornamenti futuri dello store in modo da poter sapere se lo stato è cambiato.
-
 \begin{enumerate}	
 	\item Qualcosa accade nell'applicazione, come un utente che fa clic su un pulsante.
 	\item Viene chiamata la funzione \texttt{dispatch}, specificando l'azione per modificare lo store Redux.
 	\item Lo store esegue la funzione reducer con lo stato precedente e l'azione corrente, e salva il valore restituito come nuovo stato.
 	\item Lo store notifica a tutte le parti dell'interfaccia utente che sono iscritte che lo store è stato aggiornato.
 	\item Ciascun componente dell'interfaccia utente che necessita dei dati dallo store controlla se le parti dello stato di cui hanno bisogno sono cambiate.
-	\item Ciascun componente che rileva che i suoi dati sono cambiati forza un nuovo rendering con i nuovi dati, così da poter aggiornare ciò che viene mostrato sullo schermo.
+	\item Ciascun componente che rileva che i suoi dati sono cambiati, forza un nuovo rendering con i nuovi dati, così da poter aggiornare ciò che viene mostrato sullo schermo.
 \end{enumerate}
-Per mantenere l'informazione ottenuto dalla query sullo stato di un nodo lo store che ne deriva viene dichiarato come in \cref{lst:redux-node-store}.
-\lstinputlisting[language=Kotlin,label={lst:redux-node-store}]{listings/Store.kt}.
+\paragraph{Store di un nodo}
+All'interno dell'interfaccia grafica è possibile ottenere le informazioni di un nodo effettuando una apposita query al server GraphQL. Queste informazioni possono essere utili all'interno di tutta l'interfaccia grafica e sono appositamente memorizzate in uno store. \textit{KVision} offre un'implementazione ad-hoc per gli store Redux. La creazione avviene come riportato in \cref{lst:redux-node-store}.
+\lstinputlisting[float=htb, language=Kotlin, label={lst:redux-node-store}, caption={Creazione dello store Redux \texttt{nodeStore} nel framework KVision}]{listings/Store.kt}
+\texttt{createTypedReduxStore} è una funzione della libreria di \textit{KVision} che permette la creazione di uno store alla quale, da definizione, vengono passati il relativo reducer e lo stato iniziale.
 
-\texttt{createTypedReduxStore} è una funzione della libreria di \textit{KVision} che permette la creazione
+Lo stato dell'applicazione è memorizzato all'interno dello store Redux. Non può essere cambiato direttamente dall'esterno, questo perché vige una regola di immutabilità. Lo stato corrente è sempre un oggetto immutabile, del quale non si possono cambiare i contenuti. Per aggiornare i valori in modo immutabile, devono essere eseguite copie degli oggetti esistenti e solo dopo modificare le copie. Dal \cref{lst:redux-node-state} si può notare come la classe è di tipo \texttt{data}. Dopotutto lo stato deve ``solo'' contenere informazioni.
 
-\section{Integrazioni di operazioni GraphQL}
+\lstinputlisting[float=htb, language=Kotlin, label={lst:redux-node-state}, caption={Classe \texttt{NodeState} che modella lo state}]{listings/StoreState.kt}
+
+Per questo store pertanto, le azioni sono definite come classi che possono contenere informazioni aggiuntive. La classe dichiarata è di tipo \texttt{sealed}, il che permette di usare l'espressione \texttt{when} in modo esaustivo in fase di definizione delle operazioni per tipo. Al suo interno, vi sono le sottoclassi che contengono le azioni vere e proprie. Il \cref{lst:redux-node-action} mostra come \texttt{NodeAction} è stata implementata.
+
+\lstinputlisting[float=htb, language=Kotlin, label={lst:redux-node-action}, caption={Classe action per lo store \texttt{NodeStore}}]{listings/StoreAction.kt}
+
+Infine, il \cref{lst:redux-node-reducer} mostra come è stata definita la funzione reducer, che è l'unico modo per modificate lo stato. Di solito, viene chiamata dopo che un'azione è stata inviata allo store.
+
+\lstinputlisting[float=htb, language=Kotlin, label={lst:redux-node-reducer}, caption={Funzione reducer per lo store \texttt{NodeStore}}]{listings/StoreReducer.kt}
+Facendo click sul canvas sopra a un nodo, viene quindi chiamata la funzione \texttt{dispatch()} per aggiornare lo stato corrente.
+
+\lstinputlisting[float=htb, language=Kotlin, label={lst:redux-node-query}, caption={Chiamata alla query \texttt{nodeQuery} con l'\texttt{id} recuperato dall'evento click}]{listings/NodeById.kt}
+
+
+\paragraph{Aggiornamento della componente grafica}
+Il framework \textit{KVision} viene di nuovo in aiuto per l'aggiornamento di una componente grafica in base al cambiamento di stato di uno store. Viene utile a questo scopo la concezione di \textit{state binding}. Si riferisce al processo di collegamento che avviene tra uno stato dell'applicazione e lo stato di una componente della \ac{UI}.  Questo permette al componente di reagire dinamicamente ai cambiamenti nello stato, aggiornando automaticamente la visualizzazione quando lo stato cambia. In \textit{KVision}, questo meccanismo è accessibile in diversi modi tramite funzioni specifiche fornite dalla libreria, che consentono di associare direttamente il valore dello stato a un componente \ac{UI} senza dover gestire manualmente gli aggiornamenti della visualizzazione. Il \cref{lst:redux-state-binding} mostra lo state binding tra una parte (semplificata) della componente grafica \texttt{NodeProperties} (\cref{item:node-inspection}) e lo store \texttt{NodeStore} descritto in \cref{lst:redux-node-store}. I due contenitori HTML \texttt{div} riportano le proprietà del nodo selezionato, rispettivamente il codice identificativo \texttt{id} e la coppia di coordinate (x, y) nel canvas.
+La funzione \texttt{bind()} esegue il processo descritto fino ad'ora. In alternativa, sarebbe stato comunque possibile aggiornare la componente grafica invocando la funzione \texttt{subscribe()} offerta da \texttt{NodeStore}. 
+\lstinputlisting[float=htb, language=KVision, label={lst:redux-state-binding}, caption={Binding tra i componenti \texttt{div} e \texttt{NodeStore}}]{listings/StateBinding.kt}
+
+\section{Rappresentazione dei nodi nel canvas}
+Nella \cref{section:rendering-analysis} abbiamo analizzato come la scelta di un canvas sia stato l'approccio più adatto per motivi di performance. Per questo motivo è stato impiegato l'oggetto \textit{canvas} di HTML, o meglio, si è usata la sua implementazione da parte di \textit{KVision}. All'interno del \textit{canvas} è possibile accedere al suo contesto tramite la proprietà \texttt{context2D}, di tipo \texttt{CanvasRenderingContext2D} che fornisce la capacità di disegnare qualsiasi cosa in un piano bidimensionale, utilizzando la combinazione di linee, archi, curve e altro. \texttt{CanvasRenderingContext2D} sfrutta le capacità della libreria \textit{WebGL} \footnote{\url{https://developer.mozilla.org/en-US/docs/Web/API/WebGL_API}}, un \ac{API} JavaScript per il rendering di grafiche 2D (e 3D) all'interno di un qualsiasi browser. Questo standard aderisce strettamente a quello OpenGL ES 2.0, dando la possibilità a queste \ac{API} di trattare completo vantaggio dall'utilizzo dell'accelerazione grafica del sistema.
+Ora è possibile fornire lo schema in \cref{fig:sequence-rendering-advance}, una versione più dettagliata di quello in \cref{section:rendering-analysis}. 
+
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.8]{imgs/Sequenza_rendering_plus.pdf}
+	\caption{Architettura generale del client web}
+	\label{fig:sequence-rendering-advance}
+\end{figure}
+
+
+
+
+Sebbene questo elemento necessiti dell'impego di più codice bla bla bla...
+
+
+
+
+
 
 \section{Verifica}
