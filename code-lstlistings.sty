@@ -5,9 +5,9 @@
 % LISTING CONFIGURATIONS
 %-----------------------------------------------------
 
-\crefname{lstlisting}{listing}{listing}	
-\Crefname{lstlisting}{Listing}{Listing}
-\renewcommand\lstlistlistingname{List of Listings}
+\crefname{lstlisting}{listato}{listato}	
+\Crefname{lstlisting}{Listato}{Listato}
+\renewcommand\lstlistlistingname{Elenco dei listati}
 
 \definecolor{codegreen}{rgb}{0,0.6,0}
 \definecolor{codegray}{rgb}{0.5,0.5,0.5}
@@ -19,7 +19,7 @@
 	showstringspaces=false,
 	basicstyle=\ttfamily\normalsize,
 	columns=fullflexible,
-	commentstyle={\color{olive}},
+	commentstyle={\color{codegreen}},
 	identifierstyle=\color{black},
 	ndkeywordstyle={\color{blue}},
 	stringstyle={\color{magenta}},
@@ -38,14 +38,14 @@
 \lstdefinelanguage{KVision}{
 	comment=[l]{//},
 	emph={},
-	keywords={flexPanel, div, bind},
+	keywords={flexPanel, hPanel, vPanel, div, bind, apply},
 	keywords=[2]{NodeStore, perc},
 	stringstyle={\color{codegreen}},
 	morecomment=[s]{/*}{*/},
 	morestring=[b]",
 	morestring=[s]{"""*}{*"""},
-	ndkeywords={NodeStore},
-	sensitive=true
+	ndkeywords={NodeStore,add,SimulationIndicators, NodeProperties, SimulationContext},
+	sensitive=false
 }
 
 
@@ -53,7 +53,7 @@
 \lstdefinelanguage{Kotlin}{
 	comment=[l]{//},
 	emph={delegate, filter, first, firstOrNull, forEach, lazy, map, mapNotNull, println, return@},
-	keywords={abstract, actual, as, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, override, package, private, public, return, set, sealed, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
+	keywords={abstract, actual, as, async, as?, break, by, class, companion, continue, data, do, dynamic, else, enum, expect, false, final, for, fun, get, if, import, in, interface, internal, is, null, object, override, package, private, public, return, set, sealed, super, suspend, this, throw, true, try, typealias, val, var, vararg, when, where, while},
 	stringstyle={\color{codegreen}},
 	morecomment=[s]{/*}{*/},
 	morestring=[b]",

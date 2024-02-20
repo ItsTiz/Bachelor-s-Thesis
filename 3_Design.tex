@@ -1,6 +1,6 @@
 %!TEX root = ./thesis-main.tex
-\chapter{Design}..
-\section{Layout dell'interfaccia} \ref{section:interface-layout}
+\chapter{Design}
+\section{Layout dell'interfaccia} \label{section:interface-layout}
 Il layout dell'interfaccia grafica è stato pensato per rappresentare nel modo più semplice ed intuitivo l'ambiente della simulazione.  La figura \ref{fig:interface-layout} rappresenta un mockup utilizzato durante la fase di progettazione dell'interfaccia. Si possono individuare le seguenti sezioni:
 \begin{itemize}
 	\item \textbf{Barra di navigazione}: nella parte alta dell'interfaccia è presente una barra di navigazione contenente il titolo e il pulsante per avviare o mettere in pausa la simulazione, ancorato all'estrema destra. Molte interfacce web moderne presentano questo tipo di elemento come \textit{header} della pagina web principale, inteso come punto centrale dal quale è possibile accedere a tutte le sezioni e funzionalità. Questo fornisce all'interfaccia un punto di espandibilità dell'applicativo, come l'aggiunta di una barra di ricerca o di un menù detto ad ``hamburger''. Sarebbe stato possibile, per esempio, inserire una barra di ricerca per i nodi, filtrandoli per categorie di proprietà. Questo tipo di funzionalità è indirizzato a lavori futuri. 
@@ -29,8 +29,8 @@ In questa sezione viene esplorato come l'interfaccia web interagisce con le \ac{
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[scale=0.5]{imgs/General_Architecture_Web_Client.pdf}
-	\caption{Architettura generale del client web}
+	\includegraphics[scale=0.52]{imgs/General_Architecture_Web_Client.pdf}
+	\caption{Utilizzo della connessione al client GraphQL}
 	\label{fig:general-client-architecture-graphics}
 \end{figure}
 
@@ -56,8 +56,17 @@ Il diagramma UML in figura mostra la soluzione adottata alla necessità di ospit
 	\label{fig:client-web-structure-graphics}
 \end{figure}
 
-\section{Struttura della pagina web}
+\section{Struttura della pagina web} \label{section:page-structure}
+Si vuole definire ora la struttura della pagina che si presenterà nel momento in cui gli utenti si collegheranno al client web. La struttura finale si presenta come una gerarchia di componenti grafiche. Ogni componente è raggruppata all'interno di contenitori logici per una gestione efficiente e una navigazione chiara dell'interfaccia. Questo è ottenuto attraverso l'utilizzo di oggetti che dispongono i componenti figli secondo un layout prestabilito. Sono stati creati contenitori modulari e riutilizzabili per facilitare lo sviluppo e la manutenzione dell'interfaccia, oltre che a fornire un punto di scalabilità. Di conseguenza, ciò consente di comporre e combinare diverse componenti per soddisfare le esigenze specifiche delle diverse sezioni dell'applicazione. La figura \ref{fig:page-structure} descrive la suddetta struttura.
 
+\begin{figure}[htb]
+	\centering
+	\includegraphics[scale=0.85]{imgs/Struttura pagina web.pdf}
+	\caption{Architettura generale del client web}
+	\label{fig:page-structure}
+\end{figure}
+
+.
 
 
 
