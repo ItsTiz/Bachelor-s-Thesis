@@ -16,7 +16,7 @@ Il layout dell'interfaccia grafica è stato pensato per rappresentare nel modo p
 	\label{fig:interface-layout}
 \end{figure}
 
-\section{Connessione al server GraphQL}
+\section{Connessione al server GraphQL}\label{section:graphql-connection}
 In questa sezione viene esplorato come l'interfaccia web interagisce con le \ac{API} GraphQL per effettuare operazioni sul server e per poi usare i risultati di suddette operazioni per mostrarli graficamente. Nella figura \ref{fig:general-client-architecture-graphics} vengono mostrate le principali componenti protagoniste di questo meccanismo. Le descriviamo in questo modo:
 
 \begin{itemize}
@@ -24,7 +24,7 @@ In questa sezione viene esplorato come l'interfaccia web interagisce con le \ac{
 	\item \textbf{ClientConnection}: punto di accesso attraverso il quale è possibile effettuare tutte le operazioni definite secondo lo schema GraphQL. All'interno di questo oggetto è dichiarata l'unica istanza per l'intero progetto che funge da punto di accesso per le operazioni sul server secondo lo schema definito. 
 	\item \textbf{SimulationControlApi}: questo oggetto contiene tutte le funzioni necessarie a controllare lo stato della simulazione e dipende strettamente dalla componente \textbf{ClientConnection}. Si parla quindi di funzioni utili all'avvio, alla sospensione e terminazione della simulazione. Notare come queste siano tutte operazioni di tipo \textit{mutation}.
 	\item \textbf{EnvironmentApi}: è l'oggetto utile a recuperare le informazioni riguardanti un nodo, lo stato \textit{attuale} dell'\textit{Environment}, ma soprattutto utile a recuperare la posizione dei nodi in tempo reale, quindi attraverso l'utilizzo di una \textit{subscription}. 
-	\item \textbf{GeneratedModel}: questo pacchetto contiene tutte le risorse generate a partire dallo schema GraphQL esposto dal server. È utilizzato dagli oggetti \textbf{EnvironmentApi} e \textbf{SimulationControlApi} nell'utilizzo dei tipi di dato corretto durante l'utilizzo delle operazioni sul server.
+	\item \textbf{GeneratedSources}\label{item:generated-sources}: questo pacchetto contiene tutte le risorse generate a partire dallo schema GraphQL esposto dal server. È utilizzato dagli oggetti \textbf{EnvironmentApi} e \textbf{SimulationControlApi} nell'utilizzo dei tipi di dato corretto durante la composizione delle operazioni sul server.
 \end{itemize}
 
 \begin{figure}[htb]
@@ -34,15 +34,15 @@ In questa sezione viene esplorato come l'interfaccia web interagisce con le \ac{
 	\label{fig:general-client-architecture-graphics}
 \end{figure}
 
-Gli oggetti \textbf{SimulationControlApi} e \textbf{EnvironmentApi} sono stati implementati attraverso il design pattern \textit{Singleton}~\cite{Gamma1994}. Sebbene quest'ultimo, se abusato o implementato in modo non adeguato sia considerato di fatto un ``anti-pattern'' \footnote{\url{https://code.google.com/archive/p/google-singleton-detector/wikis/WhySingletonsAreControversial.wiki}}, in questa situazione risulta essere molto comodo, specialmente considerando la necessità di un unico punto di accesso comune al client che effettua le query sul server. Risulterebbe infatti inutile, per ogni componente grafico che ne necessita, istanziare un'altro client GraphQL dal quale effettuare query. Lo stesso vale anche nell'ipotesi in cui vengano utilizzate delle proprietà che fungono da parametri di configurazione dell'applicativo. Un \textit{Singleton} può fornire un punto centralizzato per queste impostazioni.
+Gli oggetti \textbf{SimulationControlApi} e \textbf{EnvironmentApi} sono stati implementati attraverso il design pattern \textit{Singleton}~\cite{Gamma1994}. Sebbene quest'ultimo, se abusato o implementato in modo non adeguato sia considerato di fatto un ``anti-pattern'' \footnote{\url{https://code.google.com/archive/p/google-singleton-detector/wikis/WhySingletonsAreControversial.wiki}}, in questa situazione risulta essere molto comodo, specialmente considerando la necessità di un unico punto di accesso comune al client che effettua le query sul server. Risulterebbe infatti inutile, per ogni componente grafico che ne necessita, istanziare un altro client GraphQL dal quale effettuare query. Lo stesso vale anche nell'ipotesi in cui vengano utilizzate delle proprietà che fungono da parametri di configurazione dell'applicativo. Un \textit{Singleton} può fornire un punto centralizzato per queste impostazioni.
 
-\section{Architettura generale client web}
-Il diagramma UML in figura mostra la soluzione adottata alla necessità di ospitare la pagina web finale all'interno di un browser web. Dallo schema è possibile individuare le seguenti sezioni:
+\section{Architettura generale client web}\label{section:client-web-architecture}
+Il diagramma UML in figura mostra la soluzione adottata alla necessità di ospitare la pagina web finale all'interno di un browser web. Dallo schema in \cref{fig:client-web-structure-graphics} è possibile individuare le seguenti sezioni:
 
 \begin{itemize}
 	\item \textbf{OutputMonitor}: interfaccia di \textit{Alchemist} che fornisce un modo flessibile per osservare la progressione delle simulazioni tramite l'esposizione di \textit{hook standard}.  Quest'ultimi si riferiscono a punti predefiniti all'interno del ciclo di vita della simulazione (avvio della simulazione, fine di ogni passo della simulazione, fine della simulazione) ai quali è possibile collegare meccanismi personalizzati. Questa interfaccia aderisce al design pattern \textit{Observer}~\cite{Gamma1994}.
 	\item \textbf{GraphQLServer}: implementazione dell'interfaccia  \texttt{OutputMonitor}. Questa classe avvia il server GraphQL all'avvio della simulazione e si assicura che al termine della simulazione il server venga chiuso.
-    \item \textbf{WebUIMonitor}: estensione della classe \texttt{GraphQLServer}, che avvia il server sul quale viene presentata la pagina web contenente l'interfaccia grafica esplorata in sezione \ref{section:interface-layout}. Come per la classe da cui eredita, al momento della terminazione della simulazione, il server viene chiuso. L'estensione alla classe \texttt{GraphQLServer} permette che la simulazione venga configurata con \texttt{WebUIMonitor} come \texttt{OutputMonitor}, che, in thread separati, avvia sia il server GraphQL che il server che ospita la pagina web che rappresenta l'interfaccia grafica.
+    \item \textbf{WebUIMonitor}: estensione della classe \texttt{GraphQLServer}, che avvia il server sul quale viene presentata la pagina web contenente l'interfaccia grafica esplorata in sezione \ref{section:interface-layout}. Come per la classe da cui eredita, al momento della terminazione della simulazione, il server viene chiuso. L'estensione alla classe \texttt{GraphQLServer} permette che la simulazione venga configurata con \texttt{WebUIMonitor} come \texttt{OutputMonitor}, che avvia il server GraphQL e il server che ospita la pagina web che rappresenta l'interfaccia grafica.
     In questo contesto, è necessario configurare una nuova \textit{route} nel server per caricare la pagina principale \texttt{index.html}. Per semplificare il processo, questa \textit{route} verrà mappata per rispondere alle richieste GET alla radice (``\texttt{/}''), servendo la risorsa \texttt{index.html}. Ciò consente ai client di accedere direttamente alla pagina specificando l'indirizzo e la porta del server.
 	\item \textbf{Generated Artifacts}: questo pacchetto include tutti i file necessari alla composizione di un unico file di output, con estensione \texttt{.js} (processo noto anche come \textit{bundling}). Il file che ne risulterà verrà servito al server in modo statico. Il server può essere configurato per andare a recuperare tutti gli artefatti necessari al \textit{bundling} a partire da un percorso remoto specificato. Ciò significa che nel caso fossero stati dichiarati dei file CSS o JavaScript separati questi sarebbero stati comunque coinvolti nella generazione del file di output e sarebbero stati accessibili tramite \ac{URL} che iniziano dal percorso remoto (in questo caso ``\texttt{/}'').	
 	Ad esempio, se il pacchetto base contiene un file chiamato ``\texttt{styles.css}" e il percorso remoto è ``\texttt{/static}", il file ``\texttt{styles.css}" può essere accessibile all'URL ``\texttt{static/styles.css}" nell'applicazione. 
@@ -61,12 +61,17 @@ Si vuole definire ora la struttura della pagina che si presenterà nel momento i
 
 \begin{figure}[htb]
 	\centering
-	\includegraphics[scale=0.85]{imgs/Struttura pagina web.pdf}
-	\caption{Architettura generale del client web}
+	\includegraphics[scale=0.82]{imgs/Struttura pagina web.pdf}
+	\caption{Diagramm UML delle classi per le componenti della pagina web}
 	\label{fig:page-structure}
 \end{figure}
 
-.
-
+L'applicazione parte dalla classe \texttt{AppMain} che effettua una query sul \ac{DOM} per la ricerca dell'elemento padre con identificativo ``root''. Una volta ottenuto, vengono aggiunti, come componenti figli, le classi \texttt{Appbar} e \texttt{Content}, che, rispettivamente, danno forma alla barra di navigazione e alla parte corposa della pagina (il contenuto principale). In particolare per quest'ultimo, si può osservare l'esistenza di una corrispondenza uno a uno tra le sezioni descritte in \ref{section:interface-layout}: 
+\begin{itemize}
+	\item \texttt{SimulationContext}: classe padre contenente il canvas di disegno.
+	\item \texttt{ContextIndicators}: contiene tutte le singole entità grafiche che provvedono a dare informazioni riguardo al canvas.
+	\item \texttt{NodeProperties}: fornisce in un layout riassuntivo, le principali informazioni riguardanti un nodo selezionato dal canvas.
+\end{itemize}
+Come per gli elementi appena citati, è importante sottolineare la correlazione tra i macro-elementi che hanno un ruolo all'interno dell'interfaccia utente e le classi principali che compongono la struttura finale della pagina HTML. Il mantenimento di questa relazione biunivoca è di aiuto allo sviluppatore e mantiene ordinato e scalabile il codice sorgente.
 
 

@@ -52,8 +52,6 @@ Prima di analizzare il funzionamento principale dell'architettura server è util
 	\item \textbf{Unica endpoint}:  mentre nelle architetture di tipo \ac{REST} i dati sono esposti tramite endpoint dedicati che corrispondono ciascuno a una risorsa specifica (identificati tramite un \ac{URL} univoco), in GraphQL l'interrogazione dei dati avviene tramite un unico \textit{endpoint}.
 	\item \textbf{Tipizzazione forte}: GraphQL offre una tipizzazione forte dei dati, consentendo ai client di conoscere in anticipo i tipi di dati che riceveranno in risposta alle loro query. Questo porta a un maggiore controllo e previsione durante lo sviluppo delle applicazioni.
 \end{itemize}
-È facile quindi notare come questo linguaggio semplifichi lo sviluppo di applicazioni frontend.
-
 L'interazione con i dati avviene attraverso tre operazioni: 
 \begin{itemize}
 	\item \textbf{Query}: operazione di lettura per ottenere un tipo determinato di dato dal server.
@@ -61,9 +59,9 @@ L'interazione con i dati avviene attraverso tre operazioni:
 	\item \textbf{Subscription}: operazione per ricevere i cambiamenti di uno o più tipi di dati in tempo reale.
 \end{itemize}
 
-\subsubsection{Server GraphQL}
+\subsubsection{Server GraphQL e verifica delle operazioni}\label{subsection:graphql-server}
 
-Al centro delle operazioni GraphQL c'è uno schema che definisce tutti i tipi di dati disponibili e le relazioni che ci sono tra di essi, oltre che alle operazioni che possono essere eseguite. La natura intrinseca dello schema garantisce che fra client e server ci sia un meccanismo di \textit{type safety} che previene errori legati a richieste che non sono compatibili. Per questo, uno strumento molto utile messo a disposizione dal web server, accessibile tramite l'\textit{endpoint} \texttt{/graphiql}, è il \textit{playground} GraphiQL. Qui è possibile effettuare e verificare \textit{ex-ante} il risultato delle operazioni che si intendono fare prima che queste vengano usate per generare le classi associate durante la fase di compilazione del progetto. Questo processo, per lo sviluppo di un qualsiasi applicativo client che si appoggia su queste \ac{API}, permette allo sviluppatore di validare ogni singola operazione che verrà utilizzata all'interno dell'applicativo che si intende sviluppare.
+Al centro delle operazioni GraphQL c'è uno \textit{schema} che definisce tutti i tipi di dati disponibili e le relazioni che ci sono tra di essi, oltre che alle operazioni che possono essere eseguite. La natura intrinseca dello \textit{schema} garantisce che fra client e server ci sia un meccanismo di \textit{type safety} che previene errori legati a richieste che non sono compatibili. Per questo, uno strumento molto utile messo a disposizione dal  server GraphQL, accessibile tramite l'\textit{endpoint} \texttt{/graphiql}, è il \textit{playground} GraphiQL\footnote{\url{https://github.com/graphql/graphiql}}. Qui è possibile effettuare e verificare \textit{ex-ante} il risultato delle operazioni che si intendono fare prima che queste vengano usate per generare le classi associate durante la fase di compilazione del progetto. Questo processo, per lo sviluppo di un qualsiasi applicativo client che si appoggia su queste \ac{API}, permette allo sviluppatore di validare ogni singola operazione che verrà utilizzata all'interno dell'applicativo che si intende sviluppare.  Solo successivamente potranno essere eseguite le operazioni sul server GraphQL.
 
 \subsection{Rendering del contesto grafico}\label{section:rendering-analysis}
 È importante sottolineare come le prestazioni siano un fattore decisivo nella scelta delle tecniche per rappresentare l'ambiente della simulazione.
@@ -88,7 +86,6 @@ Questo approccio consente una maggiore flessibilità e compatibilità nella crea
 	\caption{Struttura di un progetto multipiattaforma compilato per KotlinJS e KotlinJVM}
 	\label{fig:mpp-project}
 \end{figure}
-
 Nel caso dello sviluppo di una applicazione in-browser il progetto potrebbe includere i seguenti \textit{source set}:
 \begin{itemize}
 	\item \textbf{Common Source Set}: Codice condiviso che può essere utilizzato su tutte le piattaforme target. 
@@ -97,10 +94,10 @@ Nel caso dello sviluppo di una applicazione in-browser il progetto potrebbe incl
 \end{itemize}
 
 \section{Analisi e Modello del Dominio}
-Uno dei requisti di questo applicativo verte sul bisogno di creare una piattaforma web tale da impiegare le \ac{API} esposte dall'infrastruttura GraphQL fornita. Pertanto non esiste una comunicazione diretta tra il web client e la simulazione di \textit{Alchemist}. La gestione dell'accesso e del recupero dei dati dal modello della simulazione è affidata alla componente server, che, al contempo, fornisce anche un punto di accesso ai client che richiedono tali dati.
+Uno dei requisti di questo applicativo verte sul bisogno di creare una piattaforma web tale da impiegare le \ac{API} esposte dall'infrastruttura GraphQL fornita. Pertanto, non esiste una comunicazione diretta tra il web client e la simulazione di \textit{Alchemist}. La gestione dell'accesso e del recupero dei dati dal modello della simulazione è affidata alla componente server, che, al contempo, fornisce anche un punto di accesso ai client che richiedono tali dati.
 Il web client quindi comprende un modulo (nell'immagine ClientGraphQL) che si pone da interfaccia tra l'applicazione web vera e propria e l'\textit{endpoint } sulla quale la componente server utilizzerà per ricevere richieste e mandare risposte (\textit{endpoint} \texttt{/graphql}). 
 Il compito del client-web quindi sarà quello di utilizzare le operazioni possibili (\textit{query}, \textit{mutation} e \textit{subscription}) e utilizzare i risultati per rappresentarli graficamente.
 
-\textit{Alchemist} presenta già altri moduli che rappresentano l'ambiente di simulazione, implementati con tecnologie differenti a quelle che verranno proposte successivamente in questo elaborato. Il modulo specifico che viene avviato per rappresentare la simulazione dipende dalla configurazione con cui viene avviato l'intero software. Di conseguenza, è opportuno che l'interfaccia web e la componente server vengano avviate esclusivamente attraverso una specifica configurazione della simulazione.
+\textit{Alchemist} presenta già altri moduli che raffigurano l'ambiente di simulazione, implementati con tecnologie differenti a quelle che verranno proposte successivamente in questo elaborato. Il modulo specifico che viene avviato per rappresentare la simulazione dipende dalla configurazione con cui viene avviato l'intero software. Di conseguenza, è opportuno che l'interfaccia web e la componente server vengano avviate esclusivamente attraverso una specifica configurazione della simulazione.
 
 
