@@ -5,7 +5,7 @@ Nell'era digitale, il software pervade ogni aspetto della vita quotidiana. L'ele
 Per la conservazione di una esperienza utente soddisfacente, è fondamentale stare al passo delle tecnologie moderne. In un mondo in costante evoluzione, gli utenti si aspettano interfacce grafiche piacevoli e intuitive.
 Da questa situazione emerge l'esigenza della creazione di una interfaccia web per il simulatore \textit{Alchemist}, in grado di affidarsi alla nuova infrastruttura \ac{API}, sviluppata per l'accesso e controllo dei dati delle simulazioni. L'interfaccia grafica esaminata all'interno di questo elaborato, è destinata a procurare un punto di partenza per descrivere il meta-modello di un sistema complesso come quello di \textit{Alchemist}, mediante l'utilizzo di uno stile moderno e facile da usare.
 \section{Contesto}
-Il progresso tecnologico degli ultimi vent'anni converge sempre più alla totale integrazione di dispositivi connessi a Internet nella vita quotidiana. La società odierna dipende sempre di più dalla tecnologia per soddisfare le proprie esigenze, spesso ricorrendo all'utilizzo di dispositivi e servizi tra loro eterogenei in hardware, ma soprattutto in software. Smartphone, \textit{wearables}, dispositivi embedded, TV, elettrodomestici, e una vasta gamma di altre tecnologie contribuiscono a creare un ecosistema digitale interconnesso. In questo contesto nasce il concetto di \textit{Pervasive Computing}), un modello informatico proposto negli anni '80, quando il ricercatore Mark Weiser introdusse il concetto di ``computing ubiquo" (da qui anche la denominazione \textit{Ubiquitous Computing}~\cite{Weiser2002}.
+Il progresso tecnologico degli ultimi vent'anni converge sempre più alla totale integrazione di dispositivi connessi a Internet nella vita quotidiana. La società odierna dipende sempre di più dalla tecnologia per soddisfare le proprie esigenze, spesso ricorrendo all'utilizzo di dispositivi e servizi tra loro eterogenei in hardware, ma soprattutto in software. Smartphone, \textit{wearables}, dispositivi embedded, TV, elettrodomestici, e una vasta gamma di altre tecnologie contribuiscono a creare un ecosistema digitale interconnesso. In questo contesto nasce il concetto di \textit{Pervasive Computing}), un modello informatico proposto negli anni '80, quando il ricercatore Mark Weiser introdusse il concetto di ``computing ubiquo" (da qui anche la denominazione \textit{Ubiquitous Computing})~\cite{Weiser2002}.
 L'obiettivo principale di questo paradigma è quindi quello di rendere la tecnologia meno intrusiva e più adattabile al contesto dell'utente.   Per raggiungere questo obiettivo, è necessario un coordinamento efficace di dispositivi, che deve garantire un'integrazione armoniosa e una comunicazione fluida tra di essi per fornire un'esperienza priva di discontinuità. Un sistema di questo tipo deve presentare caratteristiche di adattabilità e auto-organizzazione.
 L'ingegneria di questi sistemi si concentra sulla coordinazione di agenti mobili e interconnessi che collaborano attraverso lo scambio di informazioni.
 \subsection{Simulazione}
@@ -20,11 +20,11 @@ L'approccio intrapreso da \textit{Alchemist} per le interazioni tra i nodi (agen
 L'architettura del simulatore consente di modellare gli \textit{autonomous-agents} come entità che spaziano in diversi campi, tra cui il \textit{pervasive}, l'\textit{aggregate} e il \textit{nature-inspired computing}.
 
 \subsubsection{Il meta-modello}
-Con meta-modello ci si riferisce alla struttura concettuale che definisce le entità e le loro relazioni all'interno dell'ambiente di simulazione. Serve per delineare gli elementi fondamentali e le loro interazioni, fornendo una base per la costruzione ed esecuzione di simulazioni. In generale, è utile per definire e comprendere i componenti e le dinamiche del mondo simulato in Alchemist. Gli elementi principali 
+Con meta-modello ci si riferisce alla struttura concettuale che definisce le entità e le loro relazioni all'interno dell'ambiente di simulazione. Serve per delineare gli elementi fondamentali e le loro interazioni, fornendo una base per la costruzione ed esecuzione di simulazioni. In generale, è utile per definire e comprendere i componenti e le dinamiche del mondo simulato in Alchemist. Gli elementi principali sono i seguenti:
 
 \begin{itemize}
-	\item \textbf{Molecule}:  Nome di un determinato dato.
-	\item \textbf{Concentration}:  Valore associato a una particolare molecola. 
+	\item \textbf{Molecule}:  Denominazione di un determinato dato.
+	\item \textbf{Concentration}:  Valore associato a una particolare \textbf{molecule}. 
 	\item \textbf{Node}: Contenitore di molecole e reazioni, situato all'interno dell'ambiente di simulazione.
 	\item \textbf{Environment}: Rappresenta lo spazio di simulazione. È un contenitore di nodi e può fornire informazioni su:
 	\begin{enumerate}
@@ -32,20 +32,20 @@ Con meta-modello ci si riferisce alla struttura concettuale che definisce le ent
 		\item La distanza tra due nodi.
 		\item Il supporto per lo spostamento dei nodi.
 	\end{enumerate}
-	\item \textbf{Linking rule}: Funzione dello stato corrente dell'ambiente che associa a ciascun nodo un vicinato.
+	\item \textbf{Linking rule}: Funzione dello stato corrente dell'\textbf{environment}, che associa a ciascun nodo un vicinato.
 	\item \textbf{Neighborhood}: Entità definita da un nodo centrale e un insieme di nodi vicini a esso.
-	\item \textbf{Reaction}: Qualsiasi evento che può cambiare lo stato dell'ambiente. Ogni nodo ha un insieme di reaction, che può anche essere vuoto. Ogni reaction è definita da una lista di condizioni, una o più azioni e una distribuzione temporale. La frequenza con cui la reaction accade dipende da:
+	\item \textbf{Reaction}: Qualsiasi evento che può cambiare lo stato dell'ambiente. Ogni nodo ha un insieme di \textbf{reaction}, che può anche essere vuoto. Ogni reaction è definita da una lista di condizioni, una o più azioni e una distribuzione temporale. La frequenza con cui la \textbf{reaction} accade dipende da:
 		\begin{enumerate}
 		\item Un parametro di frequenza statico.
-		\item Il valore di ogni condition.
-		\item Una ``equazione di frequenza'' che combina il parametro di frequenza statico con il valore delle condition, fornendo come risultato una valore di ``frequenza istantanea''.
+		\item Il valore di ogni \textbf{condition}.
+		\item Una ``equazione di frequenza'' che combina il parametro di frequenza statico con il valore delle \textbf{condition}, fornendo come risultato una valore di ``frequenza istantanea''.
 		\item Una valore di distribuzione temporale.
 	\end{enumerate}
-	\item \textbf{Condition}: Una funzione che prende in input lo stato corrente dell'ambiente e restituisce un booleano e un numero. Se la condizione non è soddisfatta (ovvero il suo output corrente è falso), la reazione a cui è associata non può essere eseguita. In base alla reaction e alla distribuzione temporale, il numero in output ha la possibilità di influenzare o meno la velocità della reaction.
+	\item \textbf{Condition}: Una funzione che prende in input lo stato corrente dell'ambiente e restituisce un valore booleano e un numero. Se la \textbf{condition} non è soddisfatta (ovvero il suo output ritorna falso), la \textbf{reaction} a cui è associata non può essere eseguita. La distribuzione temporale e il numero in output hanno la possibilità di influenzare o meno la velocità delle \textbf{reaction}.
 	\item \textbf{Action}: Modella un cambiamento nell'ambiente.
 \end{itemize}
 
-La \cref{fig:alchemist-model} illustra il modello in esame.
+La \cref{fig:alchemist-model} illustra il modello in esame\footnote{\url{https://alchemistsimulator.github.io/explanation/metamodel/index.html}}.
 
 \begin{figure}
 	\centering
@@ -56,15 +56,29 @@ La \cref{fig:alchemist-model} illustra il modello in esame.
 
 \subsubsection{Incarnation}
 Inizialmente \textit{Alchemist} è stato concepito solamente come un motore di simulazione stocastico orientato alle reazioni chimiche, dando mobilità ai nodi e mantenendo alte prestazioni. 
-La duttilità di questo simulatore risiede nella concezione generale di \textbf{molecule} e \textbf{concentration}. In \textit{Alchemist} quest'ultimi sono definiti, rispettivamente, come un generico codice identificativo e un dato di un certo tipo. Una \textit{incarnation} definisce pertanto il tipo delle \textbf{concentration}, il set delle \textbf{condition} specifiche, le \textbf{actions}, \textbf{environment} e \textbf{reaction} che possono operare su tali tipi.
-In altre parole una incarnation è un'istanza concreta del meta-modello di \textit{Alchemist} ed è per questo motivo che è possibile modellare scenari completamente diversi tra loro.
+La duttilità di questo simulatore risiede nella concezione generale di \textbf{molecule} e \textbf{concentration}. In \textit{Alchemist} quest'ultimi sono definiti, rispettivamente, come un generico codice identificativo e un dato di un certo tipo. Una \textit{incarnation} definisce pertanto il tipo delle \textbf{concentration}, il set delle \textbf{condition} specifiche, le \textbf{action}, l'\textbf{environment} e le \textbf{reaction} che possono operare su tali tipi.
+In altre parole, una incarnation è un'istanza concreta del meta-modello di \textit{Alchemist} ed è per questo motivo che è possibile modellare scenari completamente diversi tra loro.
 Al momento, le incarnation possibili sono le seguenti:
 \begin{enumerate}
-	\item \textbf{Protelis incarnation}\footnote{\url{https://protelis.github.io/}}:  progettato per semplificare la creazione di una rete composta da dispositivi potenzialmente mobili e diversi tra loro. Aderisce al paradigma di \textit{aggregate computing}, che applica la filosofia \textit{divide et impera} mediante l'utilizzo di una rete di sensori e computer distribuiti.
+	\item \textbf{Protelis incarnation}~\cite{Pianini2015}:  progettato per semplificare la creazione di una rete composta da dispositivi potenzialmente mobili e diversi tra loro. Aderisce al paradigma di \textit{aggregate computing}, che applica la filosofia \textit{divide et impera} mediante l'utilizzo di una rete di sensori e computer distribuiti.
 	\item \textbf{SAPERE incarnation}~\cite{Zambonelli2015}: progettato per la simulazione di sistemi compositi di servizi pervasivi.
 	\item \textbf{Biochemistry incarnation}\footnote{\url{http://archive.today/nhGQy}}: consente di modellare reazioni chimiche o fenomeni biochimici all'interno dell'\textbf{environment}.
-	\item \textbf{Scafi incarnation}\footnote{\url{https://protelis.github.io/}}:  progettato anch'esso per la simulazione di sistemi compositi di servizi pervasivi.
+	\item \textbf{Scafi incarnation}~\cite{Casadei2022}:  progettato anch'esso per la simulazione di sistemi compositi di servizi pervasivi.
 \end{enumerate}
+
+\subsubsection{Scenari di utilizzo di Alchemist}
+La verifica empirica delle funzionalità del simulatore in un contesto operativo è un passaggio ineluttabile per attestarne le capacità operative. Per acquisire una maggiore comprensione delle potenzialità e applicazioni di \textit{Alchemist}, sono riportati alcuni casi d'uso che illustrano le diverse funzionalità del simulatore.
+
+\begin{itemize}
+	\item \textbf{2020: simulazione di \textit{crowd control} mediante dispositivi mobili a Torino}~\cite{Audrito2021}.
+	Il caso di studio riguarda la sorveglianza della densità della folla nel Parco del Valentino a Torino tramite dispositivi indossabili e server \textit{''edge''} distribuiti nel parco. L'obiettivo del sistema è stato prevenire situazioni di sovraffollamento, stimando densità locale e baricentro della folla per notificare agli operatori sul campo aree potenzialmente pericolose. Sono stati impiegati nove server \textit{edge} posizionati strategicamente e il sistema è stato sottoposto a diverse condizioni realistiche, tra cui perdita di pacchetti e variazioni nella frequenza di funzionamento dei dispositivi.
+	\item \textbf{2022: rilevamento e attuazione distribuita dei dati di pluviometri a Toronto}~\cite{Aguzzi_2022}.
+	La simulazione si è concentrata sulla previsione della pioggia a Toronto utilizzando dati pubblici e una rete di sensori. Sono stati utilizzati 50 campioni di pioggia reali e 300 sensori simulati, interpolando i dati dei dispositivi circostanti. Gli algoritmi hanno valutato il rischio in base all'intensità della pioggia e all'altitudine locale, generando allerte in tempo reale. Le prestazioni sono state valutate attraverso il numero di allerte e le stazioni raggiunte.
+ 	\item \textbf{2022:  simulazione dell'affluenza alle attrazioni all'interno del parco divertimenti Mirabilandia}\footnote{\url{https://github.com/ICPS-MicroCity/amusement-park-simulation}}.
+	L'obiettivo di questa simulazione è stato determinare se un sistema di raccomandazione possa influenzare positivamente il flusso dei visitatori in un parco divertimenti, confrontandolo con un sistema di re-indirizzamento casuale. I risultati mostrano che il sistema di raccomandazione adattivo può ridurre i tempi di attesa solo con un numero limitato di visitatori, mentre con un numero elevato i tempi di attesa aumentano significativamente rispetto alla politica di tipo random.
+	\item \textbf{2022: simulazione degli avvenimenti di Piazza San Carlo del 2017}\footnote{\url{https://github.com/kelvin-olaiya/SanCarloSquareStampede}}.
+	Lo studio si propone di capire le dinamiche che emergono durante un'evacuazione di emergenza in luoghi affollati, analizzando il disastro di Piazza San Carlo a Torino nel 2017. Simulando il comportamento delle persone e introducendo elementi di interazione fisica, la ricerca ha osservato come la paura si propaga nella folla (contagio sociale), creando un'onda di ``spinte'' simile a quella osservata durante l'evento reale. L'obiettivo è stato unire le conoscenze sulla psicologia umana nelle situazioni di panico con le interazioni fisiche per migliorare la gestione di eventi disastrosi in ambienti affollati.
+\end{itemize}
 
 \section{Motivazione}
 \section{Obiettivi}
